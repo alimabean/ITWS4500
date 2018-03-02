@@ -1,0 +1,11 @@
+<div>
+	<h4>Your Current Coordinates:</h4>
+	<p *ngFor="let coor of currLocation">
+		{{ coor }}
+	</p> 
+	<p *ngIf="weather">
+		{{ weather?.name }} <br/>
+		Kelvin: {{ (weather?.main.temp) | number }} <br/>
+		Farenheight: {{ ((weather?.main.temp - 273.15) * 1.8) + 32 | number }}
+	</p>
+</div>
