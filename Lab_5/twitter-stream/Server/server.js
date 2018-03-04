@@ -10,10 +10,6 @@ var client = new twitter({
   // consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
   // access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
   // access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
-  consumer_key: 'ewZZKdHo3cePYLsRJYX64gkGD',
-  consumer_secret: '21ekNlz6tRvkew1birdAlUmHfcrm8wVNNBQZogpuQJtIWkwuVe',
-  access_token_key:'969357938354769925-P1roRZsVnnlNmU6mBH4z5keIDBCkXot',
-  access_token_secret: 'tpgHiC9VSdabY5TtfSofYgOOk9ZG1A7hSZSFoinAA0q9v'
 })
 
 // Resolve GET Request
