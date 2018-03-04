@@ -37,7 +37,7 @@ function writeTweets(tweets) {
 function getTweets(endpoint, params) {
 	return new Promise((resolve, reject) => {
 		client.get(endpoint, params, (error, data, response) => {
-			if (error) reject(error)
+			if (error) console.log(error)
 			else {
 				writeTweets(data)
 				resolve(data)
