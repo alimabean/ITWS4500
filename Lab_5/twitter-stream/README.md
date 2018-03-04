@@ -14,13 +14,13 @@ Backend:
 		- used to pull tweets from the twitter api using the `node-twitter` package
 		- handles incoming requests with sockets
 
-	get requests are handled as async promises that is then emitted to the requesting connection
+	get requests are handled as async promises that are then emitted to the requesting connection
 
 	once tweets are loaded, a call to writeTweets() is made to log the tweets to a local file
 
 Per the lab requirements:
 	- tweets are defaulted to the rpi area if a location is not specified
-	- tweet count are defaulted to 10 if none is specified
+	- tweet count is defaulted to 10 if none is specified
 
 Future work:
 	- error handling for incorrect longitude + latitude queries
