@@ -5,11 +5,11 @@ const twitter = require('twitter')
 const fs = require('fs')
 
 var client = new twitter({
-	// Enter your twitter api keys
-  // consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  // consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  // access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-  // access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+  // Enter your twitter api keys
+  consumer_key: process.env.TWITTER_CONSUMER_KEY,
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 })
 
 // Resolve GET Request
