@@ -36,20 +36,21 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
 
   constructor(private webSocket: WebSocketService) { }
 
+  // Send the Lat, Lon to server via websocket service
   sendLocation(): void {
     this.webSocket.sendLocation(this.location, this.count);
     this.location = '';
     this.count = '';
   }
-
+  // Empty the tweets array, removing the tweets from the display
   clearTweets(): void {
     this.tweets = [];
   }
-
+  // Extract screen_name and text from tweet
   parseTweet(tweet): void {
     this.tweets.push([tweet[5], tweet[2]]);
   }
-
+  // Subscribe to the websocket observable and fill the tweetsInfo array
   getTweets(): void {
     this.connection = this.webSocket.getTweets().subscribe(tweets => {
       this.tweetsInfo = <any>tweets;
@@ -59,9 +60,9 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Parse the tweets into JSON structure
   generateJson(): string {
     let json = '{';
-    console.log(this.tweetsInfo);
     this.tweetsInfo.forEach((tweet) => {
       json +=
        `{"created_at":"${tweet[0]}",
@@ -86,20 +87,21 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
     return json;
   }
 
+  // Parse tweets into CSV format
   generateCsv(): string {
     let csvContent = '"created_at","id","text","user_id","user_name","user_screen_name",' +
       '"user_location","user_followers_count","user_friends_count","user_created_at",' +
       '"user_time_zone","user_profile_background_color","user_profile_image_url","geo","coordinates","place"\r\n';
     (this.tweetsInfo).forEach(row => {
       row = row.map(item => item === null ? 'null' : item);
-      console.log(row);
+      row = row.map(item => `"${item}"`);
       csvContent += row.join(',') + '\r\n';
     });
     return csvContent;
   }
 
+  // Create a Blob object from the tweets, download the file
   generateFile() {
-
     const file = new Blob([this.selected === 'json' ?
       this.generateJson() : this.generateCsv()], {
       type: `text/${this.selected}`,
@@ -107,6 +109,7 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
     saveAs(file, `limaa-tweets.${this.selected}`);
   }
 
+  // Verify that the user has tweets to download
   getFile(): void {
     if (this.tweetsInfo.length === 0) {
       alert('No tweets are available to download');

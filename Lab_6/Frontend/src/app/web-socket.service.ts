@@ -11,14 +11,12 @@ export class WebSocketService {
 
   constructor() { }
 
+  // Send location to server via socket
   sendLocation(location, count): void {
     this.socket.emit('location', [location, count]);
   }
 
-  requestFile(fileType): void {
-    this.socket.emit('file', [fileType]);
-  }
-
+  // Return observable for tweets
   getTweets() {
     const observable = new Observable(observer => {
       this.socket.on('tweets', tweets => {
