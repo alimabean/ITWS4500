@@ -11,7 +11,7 @@ Backend:
 
 - The file can be downloaded as soon as tweets are pulled, but this can   result in many (many) files downloaded
 
-- However additional information that is not displayed to the user will   not have to be sent over, faster api to client
+- However additional information that is not displayed to the user will   not have to be sent over; faster api to client
 
 Frontend:
 - User gets a modal asking if they want to proceed with downloading the   file
