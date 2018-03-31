@@ -4,11 +4,12 @@ const io = require('socket.io')(http)
 const twitter = require('twitter')
 const fs = require('fs')
 const csv = require('csv-write-stream')
-const writer = csv({ header: 
-	["created_at", "id", "text", "user_id", "user_name", "user_screen_name", "user_location",
-	 "user_followers_count", "user_created_at", "user_time_zone", "user_profile_background_color",
-	 "user_profile_image_url", "geo", "coordinates", "place"]
-})
+const writer = csv({ headers: ["tweet"]})
+// const writer = csv({ headers: 
+// 	["created_at", "id", "text", "user_id", "user_name", "user_screen_name", "user_location",
+// 	 "user_followers_count", "user_created_at", "user_time_zone", "user_profile_background_color",
+// 	 "user_profile_image_url", "geo", "coordinates", "place"]
+// })
 
 var client = new twitter({
 	// Enter your twitter api keys
@@ -36,20 +37,20 @@ function makeGet(coords, count) {
 
 // Write tweets to a local json file
 function writeTweets(tweets, type) {
+  parsed = parseTweets(tweets)
 	if (type == 'json') {
-		fs.writeFile('limaa-tweets.json', JSON.stringify(tweets), function(err) {
+		fs.writeFile('limaa-tweets.json', JSON.stringify(parsed), function(err) {
 			if (err) {
 				return console.log(err)
 			}
 		})
 	}
 	else {
-			writer.pipe(fs.createWriteStream('limaa-tweets.csv'))
-			writer.write('limaa-tweets.json', JSON.stringify(tweets), function(err) {
-			if (err) {
-				return console.log(err)
-			}
-		})
+		writer.pipe(fs.createWriteStream('limaa-tweets.csv'))
+    parsed.forEach(tweet => {
+      writer.write([tweet])
+    });
+    // writer.end()
 	}
 }
 
@@ -59,7 +60,7 @@ function getTweets(endpoint, params) {
 		client.get(endpoint, params, (error, data, response) => {
 			if (error) reject(error)
 			else {
-				writeTweets(data)
+				writeTweets(data, 'csv')
 				resolve(data)
 			}
 		})
@@ -68,8 +69,15 @@ function getTweets(endpoint, params) {
 
 // Scrub the json for the tweet text
 function parseTweets(json) {
-	data = json['statuses'].filter(tweet => tweet['text']).map(tweet => tweet['text'])
-	console.log(data)
+	data = json['statuses'].filter(tweet => tweet['text']).map(tweet => 
+    [tweet['created_at'], tweet['id'], tweet['text'],
+      tweet['user']['id'], tweet['user']['name'], tweet['user']['screen_name'], 
+      tweet['user']['location'], tweet['user']['followers_count'], 
+      tweet['user']['created_at'], tweet['user']['time_zone'], 
+      tweet['user']['profile_background_color'], tweet['user']['profile_image_url'],
+      tweet['geo'], tweet['coordinates'], tweet['place']['id']
+    ] 
+  )
 	return data
 }
 
@@ -82,14 +90,17 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('location', async (query) => {
-		console.log('Requested location' + query[0])
 		location = query[0] ? query[0].split(' ') : ['42.728412','-73.691785']
 		count = query[1] ? query[1] : '10'
-		console.log(location)
 		const tweets = await makeGet(location, count)
 		// Send tweets only to the requesting user
 		socket.emit('tweets', parseTweets(tweets))
-	})
+  })
+  
+  socket.on('file', async (fileType) => {
+    console.log(fileType);
+  });
+
 })
 
 http.listen(5000, () => {
