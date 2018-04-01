@@ -47,16 +47,14 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
     this.tweets = [];
   }
   // Extract screen_name and text from tweet
-  parseTweet(tweet): void {
-    this.tweets.push([tweet[5], tweet[2]]);
+  parseTweet(tweet): Array<string> {
+    return [tweet[5], tweet[2]];
   }
   // Subscribe to the websocket observable and fill the tweetsInfo array
   getTweets(): void {
-    this.connection = this.webSocket.getTweets().subscribe(tweets => {
+    this.connection = this.webSocket.getTweets().subscribe((tweets) => {
       this.tweetsInfo = <any>tweets;
-      (<any>tweets).forEach(tweet => {
-        this.parseTweet(tweet);
-      });
+      this.tweets = (<any>tweets).map(tweet => this.parseTweet(tweet));
     });
   }
 
