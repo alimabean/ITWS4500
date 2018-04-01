@@ -91,7 +91,7 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
       '"user_location","user_followers_count","user_friends_count","user_created_at",' +
       '"user_time_zone","user_profile_background_color","user_profile_image_url","geo","coordinates","place"\r\n';
     (this.tweetsInfo).forEach(row => {
-      row = row.map(item => item === null ? 'null' : item);
+      row = row.map(item => item === null ? "null" : item);
       row = row.map(item => `"${item}"`);
       csvContent += row.join(',') + '\r\n';
     });
