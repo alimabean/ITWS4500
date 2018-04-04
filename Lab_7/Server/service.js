@@ -51,6 +51,14 @@ module.exports.findAllTweets = async () => {
     await TWEET.find((err, docs) => {
         if (err) console.error(err);
         tweets = docs;
+        console.log(tweets);
     });
     return tweets;
+}
+
+module.exports.deleteAllTweets = () => {
+    TWEET.remove((err) => {
+        if (err) console.error(err);
+        else console.log('Successfully deleted all Tweets from DB');
+    });
 }

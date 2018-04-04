@@ -16,8 +16,29 @@ export class WebSocketService {
     this.socket.emit('location', [location, count]);
   }
 
+  deleteAllTweets(): void {
+    console.log('deleting all tweets');
+    this.socket.emit('deleteAll');
+  }
+
+  requestTweetsForFile(query): void {
+    this.socket.emit('requestTweets', query);
+  }
+
+  getTweetsForFile(): Observable<any> {
+    const observable = new Observable(observer => {
+      this.socket.on('tweetsFile', (tweets) => {
+        observer.next(tweets);
+      });
+      return () => {
+        this.socket.disconnect();
+      }
+    });
+    return observable;
+  }
+
   // Return observable for tweets
-  getTweets() {
+  getTweets(): Observable<any> {
     const observable = new Observable(observer => {
       this.socket.on('tweets', tweets => {
         observer.next(tweets);
@@ -28,5 +49,4 @@ export class WebSocketService {
     });
     return observable;
   }
-
 }

@@ -10,7 +10,7 @@
 			<mat-option value="xml">xml</mat-option>
 		</mat-select>
 	</mat-form-field>
-	<button (click)="getFile()">export</button>
+	<button (click)="requestTweetsForFile()">export</button>
 	you selected: {{ selected }}
 	<div *ngFor="let tweet of tweets" [@flyInOut]>
 		{{tweet}}

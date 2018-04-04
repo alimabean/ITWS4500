@@ -45,6 +45,7 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
   // Empty the tweets array, removing the tweets from the display
   clearTweets(): void {
     this.tweets = [];
+    this.webSocket.deleteAllTweets();
   }
   // Extract screen_name and text from tweet
   parseTweet(tweet): Array<string> {
@@ -60,7 +61,7 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
 
   // Parse the tweets into JSON structure
   generateJson(): string {
-    let json = '{';
+    let json = '{"tweets":[';
     this.tweetsInfo.forEach((tweet) => {
       json +=
        `{"created_at":"${tweet[0]}",
@@ -81,7 +82,7 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
         "place":"${tweet[15]}"},\n`;
     });
     json.slice(0, -1);
-    json += '}';
+    json += ']}';
     return json;
   }
 
@@ -126,7 +127,7 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
   }
 
   // Create a Blob object from the tweets, download the file
-  generateFile() {
+  generateFile(): void {
     const file = new Blob([this.selected === 'json' ?
       this.generateJson() : (this.selected === 'csv' ? this.generateCsv() : this.generateXml())], {
       type: `text/${this.selected}`,
@@ -134,20 +135,28 @@ export class TwitterDisplayComponent implements OnInit, OnDestroy {
     saveAs(file, `limaa-tweets.${this.selected}`);
   }
 
+  requestTweetsForFile(query) {
+    this.webSocket.requestTweetsForFile(query);
+  }
+
   // Verify that the user has tweets to download
   getFile(): void {
-    if (this.tweetsInfo.length === 0) {
-      alert('No tweets are available to download');
-    } else {
-      this.generateFile();
-    }
+    this.webSocket.getTweetsForFile().subscribe((tweets) => {
+      if (tweets.length === 0) {
+        alert('No tweets are available to download');
+      } else {
+        this.tweetsInfo = tweets;
+        this.generateFile();
+      }
+    });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getTweets();
+    this.getFile();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.connection.unsubscribe();
   }
 

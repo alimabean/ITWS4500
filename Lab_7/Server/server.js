@@ -20,15 +20,12 @@ var client = new twitter({
 });
 
 // Resolve GET Request
-function makeGet(coords, count) {
-	return getTweets('search/tweets', {
+async function makeGet(coords, count) {
+	return await getTweets('search/tweets', {
 		q: 'rpi',
 		geocode: `${coords[0]},${coords[1]},1km`,
 		result_type:'recent',
-		count: count
-	}).then(data => {
-		return data
-	});
+		count: count});
 }
 
 // Write tweets to a local json file
@@ -84,13 +81,22 @@ function parseTweets(json) {
 	return data;
 }
 
+function deleteAllTweets() {
+	service.deleteAllTweets();
+}
+
+async function getTweetsFromDb(query) {
+	console.log('fetching tweets from DB');
+	return await service.findAllTweets();
+}
+
 // Handle front end calls
 io.on('connection', (socket) => {
 	console.log('a user connected');
 
 	socket.on('disconnect', () => {
 		console.log('a user disconnected');
-	})
+	});
 
 	socket.on('location', async (query) => {
 		location = query[0] ? query[0].split(' ') : ['42.728412','-73.691785'];
@@ -98,11 +104,19 @@ io.on('connection', (socket) => {
 		const tweets = await makeGet(location, count);
 		// Send tweets only to the requesting user
 		socket.emit('tweets', parseTweets(tweets));
-  })
+	});
+	
+	socket.on('requestTweets', async (query) => {
+		socket.emit('tweetsFile', await getTweetsFromDb());
+	});
 
   socket.on('file', async (fileType) => {
     console.log(fileType);
-  });
+	});
+	
+	socket.on('deleteAll', () => {
+		deleteAllTweets();
+	});
 
 })
 
