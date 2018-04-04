@@ -1,0 +1,18 @@
+<mat-card>
+	<input [(ngModel)]="location" (keyup.enter)="sendLocation()" placeholder="{{location_placeholder}}"/>
+	<input [(ngModel)]="count" placeholder="{{count_placeholder}}"/>
+	<button (click)="sendLocation()">get tweets</button>
+	<button (click)="clearTweets()">clear</button>
+	<mat-form-field>
+		<mat-select [(value)]="selected">
+			<mat-option value="json">json</mat-option>
+			<mat-option value="csv">csv</mat-option>
+			<mat-option value="xml">xml</mat-option>
+		</mat-select>
+	</mat-form-field>
+	<button (click)="getFile()">export</button>
+	you selected: {{ selected }}
+	<div *ngFor="let tweet of tweets" [@flyInOut]>
+		{{tweet}}
+	</div>
+</mat-card>

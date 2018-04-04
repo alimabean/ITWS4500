@@ -1,0 +1,14 @@
+#wrapper {
+	height: 100%;
+	width: 100%;
+}
+
+#header, #footer {
+	height: 10%;
+	background: blue;
+}
+
+#content {
+	height: 80%;
+	overflow: auto;
+}
